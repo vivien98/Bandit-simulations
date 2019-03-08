@@ -27,6 +27,18 @@ class user :
 
 		self.regret = [0]     # regret
 
+	def reset(self):
+		self.alpha = np.ones(N_arms)    #beta params
+		self.beta = np.ones(N_arms)
+
+		self.est_mean = np.zeros(N_arms)      #ucb algorithm params
+		self.ucb = np.zeros(N_arms)
+		self.num_pulled = np.zeros(N_arms)
+		self.num_chosen = np.zeros(N_arms)
+
+		self.regret = [0]     # regret
+
+
 	def updateThompDistr(self,arm,bern):
 		self.num_pulled[arm] += 1
 		self.alpha[arm] = self.alpha[arm] + bern
@@ -138,7 +150,12 @@ users = np.append(users,[u0,u1,u2,u3,u4])
 armGraph = np.array([[1,3],[0,2],[1,3],[0,2]])
 
 
-simulation(5000,users,armGraph,0)
+simulation(5000,users,armGraph,0) #ucb simulation 
+
+for i in range(N_users):
+	users[i].reset()
+
+simulation(5000,users,armGraph,1) # thompson sampling simulation
 
 #----------------------------------------------------------------------------------------------------------#
 
