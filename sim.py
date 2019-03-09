@@ -7,10 +7,9 @@ import matplotlib as mpl
 N_arms = 4
 N_users = 5
 ucb_alpha = 1
+thompson_alpha = 3
 t = 1
-actualBernMeans = np.random.uniform(0,1,(N_users,N_arms))
 
-print(actualBernMeans)
 
 class user :
 	def __init__(self,nbu,index):
@@ -41,8 +40,8 @@ class user :
 
 	def updateThompDistr(self,arm,bern):
 		self.num_pulled[arm] += 1
-		self.alpha[arm] = self.alpha[arm] + bern
-		self.beta[arm] = self.beta[arm] + 1 - bern				
+		self.alpha[arm] = self.alpha[arm] + thompson_alpha*bern
+		self.beta[arm] = self.beta[arm] + thompson_alpha*(1 - bern)				
 
 	def updateUCBEst(self,arm,bern):
 		self.num_pulled[arm] += 1
@@ -143,19 +142,39 @@ u2 = user(np.array([0,1,3]),2)
 u3 = user(np.array([2,4]),3)
 u4 = user(np.array([0,3]),4)
 
-users = np.array([])
+u_alone0 = user(np.array([]),0)
+u_alone1 = user(np.array([]),1)
+u_alone2 = user(np.array([]),2)
+u_alone3 = user(np.array([]),3)
+u_alone4 = user(np.array([]),4)
 
+users = np.array([])
 users = np.append(users,[u0,u1,u2,u3,u4])
+
+user_alone = np.array([])
+user_alone = np.append(user_alone,[u_alone0,u_alone1,u_alone2,u_alone3,u_alone4])
 
 armGraph = np.array([[1,3],[0,2],[1,3],[0,2]])
 
+actualBernMeans = np.random.uniform(0,1,(N_users,N_arms))
+
+print(actualBernMeans)
 
 simulation(5000,users,armGraph,0) #ucb simulation 
-
+print("UCB with user graph ends")
 for i in range(N_users):
 	users[i].reset()
-
 simulation(5000,users,armGraph,1) # thompson sampling simulation
+print("thompson with user graph ends")
+
+simulation(5000,user_alone,armGraph,0)
+print("UCB without user graph ends")
+for i in range(N_users):
+	user_alone[i].reset()
+simulation(5000,user_alone,armGraph,1)
+print("thompson without user graph ends")
+
+
 
 #----------------------------------------------------------------------------------------------------------#
 
