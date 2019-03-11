@@ -179,18 +179,33 @@ armGraph = np.array([[1,3],[0,2],[1,3],[0,2]])
 
 actualBernMeans = np.random.uniform(0,1,(N_users,N_arms))
 
-thomp1 = multiSimulation(5000,users,armGraph,1,200)
+thomp1 = multiSimulation(5000,users,armGraph,1,500)
 pl.plot(thomp1,'c',label = '1')
 
-thomp2 = multiSimulation(5000,user_alone,armGraph,1,200)
+thomp2 = multiSimulation(5000,user_alone,armGraph,1,500)
 pl.plot(thomp2,'r',label = '2')
 
-ucb1 = multiSimulation(5000,users,armGraph,0,200)
+
+
+ucb1 = multiSimulation(5000,users,armGraph,0,500)
 pl.plot(ucb1,'b',label = '3')
 
-ucb2 = multiSimulation(5000,user_alone,armGraph,0,200)
+ucb2 = multiSimulation(5000,user_alone,armGraph,0,500)
 pl.plot(ucb2,'g',label = '4')
 
+
+pl.show()
+
+k_th = np.zeros(500)
+k_ucb = np.zeros(500)
+
+for i in range(500):
+	if i != 0:
+		k_th[i] = thomp2[i]/thomp1[i]
+		k_ucb[i] = ucb2[i]/ucb1[i] 
+
+pl.plot(k_th,'b')
+pl.plot(k_ucb,'r')
 
 pl.show()
 
