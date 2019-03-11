@@ -126,11 +126,32 @@ def simulation(T,users,armGraph,isThompson):
 
 		t += 1
 
+	temp = np.zeros(500)
 	for i in range(N_users):
-		bestarm = np.argmax(users[i].num_chosen)
-		print(bestarm)
-		pl.plot(users[i].regret)
-		pl.show()
+		# bestarm = np.argmax(users[i].num_chosen)
+		# print(bestarm)
+		temp += users[i].regret[0:500]
+		# pl.plot(users[i].regret[0:500])
+		# pl.show()
+	return (temp/N_users)
+
+def multiSimulation(T,users,armGraph,isThompson,numSimulations):
+	temp = np.zeros(500)
+	for i in range(numSimulations):
+		actualBernMeans = np.random.uniform(0,1,(N_users,N_arms))
+		
+		temp = temp + simulation(T,users,armGraph,isThompson)
+		# for j in range(500):
+		# 	temp[j] += 1/5*(users[0].regret[j] + users[1].regret[j] + users[2].regret[j] + users[3].regret[j] + users[4].regret[j] )
+		for j in range(N_users):
+			users[j].reset()
+		#pl.plot(temp)
+		#pl.show()
+
+	temp = temp / numSimulations
+	return temp
+
+				
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -158,21 +179,36 @@ armGraph = np.array([[1,3],[0,2],[1,3],[0,2]])
 
 actualBernMeans = np.random.uniform(0,1,(N_users,N_arms))
 
-print(actualBernMeans)
+thomp1 = multiSimulation(5000,users,armGraph,1,200)
+pl.plot(thomp1,'c',label = '1')
 
-simulation(5000,users,armGraph,0) #ucb simulation 
-print("UCB with user graph ends")
-for i in range(N_users):
-	users[i].reset()
-simulation(5000,users,armGraph,1) # thompson sampling simulation
-print("thompson with user graph ends")
+thomp2 = multiSimulation(5000,user_alone,armGraph,1,200)
+pl.plot(thomp2,'r',label = '2')
 
-simulation(5000,user_alone,armGraph,0)
-print("UCB without user graph ends")
-for i in range(N_users):
-	user_alone[i].reset()
-simulation(5000,user_alone,armGraph,1)
-print("thompson without user graph ends")
+ucb1 = multiSimulation(5000,users,armGraph,0,200)
+pl.plot(ucb1,'b',label = '3')
+
+ucb2 = multiSimulation(5000,user_alone,armGraph,0,200)
+pl.plot(ucb2,'g',label = '4')
+
+
+pl.show()
+
+# print(actualBernMeans)
+
+# simulation(5000,users,armGraph,0) #ucb simulation 
+# print("UCB with user graph ends")
+# for i in range(N_users):
+# 	users[i].reset()
+#simulation(5000,users,armGraph,1) # thompson sampling simulation
+# print("thompson with user graph ends")
+
+# simulation(5000,user_alone,armGraph,0)
+# print("UCB without user graph ends")
+# for i in range(N_users):
+# 	user_alone[i].reset()
+# simulation(5000,user_alone,armGraph,1)
+# print("thompson without user graph ends")
 
 
 
