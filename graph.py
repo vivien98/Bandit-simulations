@@ -139,7 +139,7 @@ def multiSimulation(T,users,armGraph,isThompson,numSimulations):
 	temp = np.zeros(500)
 	for i in range(numSimulations):
 		actualBernMeans = np.random.uniform(0,1,(N_users,N_arms))
-		print(actualBernMeans)
+		#print(actualBernMeans)
 		
 		temp = temp + simulation(T,users,armGraph,isThompson)
 		# for j in range(500):
@@ -156,7 +156,6 @@ def multiSimulation(T,users,armGraph,isThompson,numSimulations):
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------#
-
 
 u0 = user(np.array([1,2,4]),0)
 u1 = user(np.array([0,1]),1)
