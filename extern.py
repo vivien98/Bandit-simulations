@@ -5,30 +5,59 @@ import scipy as sp
 import matplotlib as mpl
 
 
-N_arms = 2
-N_time = 2000
+N_arms = 3
+N_time = 500
+
 alpha = np.zeros(N_arms)
 arms = np.zeros(N_arms)
-alpha_init = 15
-empty = np.array([alpha_init])
-actualMeans = np.random.uniform(0,1,(N_arms,N_arms))
+alpha_init = 20
+total = alpha_init*N_arms
 
+rewardInfluence = 1
+#actualMeans = np.random.uniform(0,1,(N_arms,N_arms))
+actualMeans = np.zeros((3,3))
+actualMeans[0][0] = 0.7
+actualMeans[1][0] = 0.3
+actualMeans[2][0] = 0.2
+
+actualMeans[0][1] = 0.1
+actualMeans[1][1] = 0.9
+actualMeans[2][1] = 0.1
+
+actualMeans[0][2] = 0.3
+actualMeans[1][2] = 0.4
+actualMeans[2][2] = 0.6
 
 for i in range(N_arms):
-	actualMeans[i][i] = np.random.uniform(0.5,1)
+	#actualMeans[i][i] = np.random.uniform(0.5,1)
 	alpha[i] = alpha_init 
 	arms[i] = i
 
+def reset():
+	global alpha,total
+	global alpha_init
+	alpha = np.zeros(N_arms)
+	total = alpha_init*N_arms
+	alpha_init = 20
+	for i in range(N_arms):
+		alpha[i] = alpha_init 
+
+
 def slot(armChosen):
+	global alpha,total
+	global alpha_init
+	global N_arms,N_time,rewardInfluence,arms
 	prob = np.zeros(N_arms)
 
 	for i in range(N_arms):
-		prob[i] = alpha[i]/(alpha_init*N_arms)
+		prob[i] = alpha[i]/(total)
 	armPref = int(np.random.choice(arms, 1, p=prob)[0])
 	if armChosen == armPref:
-		reward = 2*np.random.binomial(1,actualMeans[armChosen][armChosen]) 
+		reward = rewardInfluence*2*np.random.binomial(1,actualMeans[armChosen][armChosen]) 
+		alpha[armPref] += reward
+		total += reward	
 	else:
-		reward = 2*(np.random.binomial(1,actualMeans[armPref][armChosen]) - 0.5)
+		reward = rewardInfluence*2*(np.random.binomial(1,actualMeans[armPref][armChosen]) - 0.5)
 		alpha[armChosen] += reward
 		alpha[armPref] -= reward
 		if alpha[armPref] < 0 :
@@ -43,31 +72,64 @@ def slot(armChosen):
 
 	return reward
 
-def policy0(numSim):
+
+def sillyPolicy(numSim):
+	global alpha,total
+	global alpha_init
+	global N_arms,N_time,rewardInfluence,arms
+	alp = np.zeros((N_arms,N_time+1))
+	for i in range(N_arms):
+		alp[i][0] = numSim/N_arms
 	for k in range(numSim):
-		avgR = np.ones(N_arms)
-		numPulled = np.ones(N_arms)
-		p = np.zeros(N_arms)
-		alp = np.zeros((N_arms,N_time+1))
-		for i in range(N_arms):
-			alp[i][0] = alpha_init
+		reset()
 		for i in range(N_time):
-			s = 0
-			for j in range(N_arms):
-				s+=avgR
-			p = avgR/s
-			armChosen =  int(np.random.choice(arms, 1, p=p)[0])
+			armChosen = 2
 			r = slot(armChosen)
-			avgR[armChosen] = (avgR[armChosen]*numPulled[armChosen] + r)/(numPulled[armChosen] + 1)
-			numPulled[armChosen] += 1
 			for j in range(N_arms):
-				alp[j][i+1] = alpha[j]
+					alp[j][i+1] += (alpha[j]/total)
+	alp = alp/numSim
 	pl.plot(alp[0],'c')
 	pl.plot(alp[1],'b')
+	pl.plot(alp[2],'g')
 	pl.show()
 
 
+def policy0(numSim):
+	global alpha,total
+	global alpha_init
+	global N_arms,N_time,rewardInfluence,arms
+	alp = np.zeros((N_arms,N_time+1))
+	for i in range(N_arms):
+		alp[i][0] = numSim/N_arms
+	for k in range(numSim):
+		reset()
+		avgR = np.ones(N_arms)
+		numPulled = np.ones(N_arms)
+		p = np.zeros(N_arms)
+		
+		for i in range(N_time):
+			s = 0
+			for j in range(N_arms):
+				s+=avgR[j]
+			p = avgR/s
+			armChosen =  int(np.random.choice(arms, 1, p=p)[0])
+			r = max(0,slot(armChosen))
+			avgR[armChosen] = (avgR[armChosen]*numPulled[armChosen] + r)/(numPulled[armChosen] + 1)
+			numPulled[armChosen] += 1
+			for j in range(N_arms):
+				alp[j][i+1] += (alpha[j]/total)
+
+
+	alp = alp/numSim
+	pl.plot(alp[0],'c')
+	pl.plot(alp[1],'b')
+	pl.plot(alp[2],'g')
+	pl.show()
+
 def policy1():
+	global alpha
+	global alpha_init
+	global N_arms,N_time,rewardInfluence,arms
 	thompA = np.zeros(N_arms)
 	prob = np.zeros(N_arms)
 	for i in range(N_arms):
@@ -85,10 +147,13 @@ def policy1():
 			tot -= r
 
 
-
+def testpolicy():
+	
+	
 #---------------------------------------------------------------------------------------------------------------------
 
 
 print(actualMeans)
-policy0(1)
+sillyPolicy(100)
+policy0(100)
 
