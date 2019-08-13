@@ -6,7 +6,7 @@ import matplotlib as mpl
 
 
 N_arms = 5
-N_time = 100000	
+N_time = 100000
 
 alpha = np.zeros(N_arms)
 arms = np.zeros(N_arms)
@@ -74,7 +74,7 @@ def slot(armChosen):
 		prob[i] = alpha[i]/(total)
 	armPref = int(np.random.choice(arms, 1, p=prob)[0])
 	if armChosen == armPref:
-		reward = rewardInfluence*2*np.random.binomial(1,actualMeans[armChosen][armChosen]) 
+		reward = rewardInfluence*2*(np.random.binomial(1,actualMeans[armChosen][armChosen]))
 		alpha[armPref] += reward
 		# for j in range(N_arms):
 		# 	alpha[j] -= reward/(N_arms-1)
@@ -98,7 +98,7 @@ def slot(armChosen):
 	return reward
 
 
-def sillyPolicy(numSim):
+def sillyPolicy(numSim):#pull one arm always
 	global alpha,total
 	global alpha_init
 	global N_arms,N_time,rewardInfluence,arms
@@ -110,7 +110,7 @@ def sillyPolicy(numSim):
 		for i in range(N_time):
 			armChosen = 0
 			r = slot(armChosen)
-			for j in range(N_arms):
+			for j in range(N_arms):  
 					alp[j][i+1] += (alpha[j]/total)
 	alp = alp/numSim
 	pl.plot(alp[0],'c')
@@ -179,23 +179,36 @@ def armToPull1(): #when mu is being estimated
 	global alpha_init
 	global N_arms,N_time,rewardInfluence,arms
 	arm = int(np.random.choice(arms,1))
+	# invertAlpha = np.zeros(N_arms)
+	# acc = 0
+	# for i in range(N_arms):
+	# 	if alpha[i] != 0:
+	# 		invertAlpha[i] = 1/alpha[i]
+	# 		acc += invertAlpha[i]
+	# invertAlpha /= acc
+	Alpha = alpha/total
+	arm = int(np.random.choice(arms,1,p=Alpha))
+		
 	return arm
 
 def armToPull2(amu,bestArm): # when mu estimation is over
-	excludeBestArm = alpha[np.arange(len(alpha))!=bestArm]
-	targetArm = np.argmax(excludeBestArm)
-	if bestArm <= targetArm:
-		targetArm += 1
-	excBestArm = amu[targetArm][np.arange(len(amu[targetArm]))!=bestArm]
-	arm = np.argmax(excBestArm)
-	if bestArm <= arm:
-		arm += 1
+	if alpha[bestArm]/total > 0.8: #need a way to compute the threshold from the estimated matrix. Try different values of threshold till it fails
+		arm = bestArm
+	else:
+		excludeBestArm = alpha[np.arange(len(alpha))!=bestArm]
+		targetArm = np.argmax(excludeBestArm)
+		if bestArm <= targetArm:
+			targetArm += 1
+		excBestArm = amu[targetArm][np.arange(len(amu[targetArm]))!=bestArm]
+		arm = np.argmax(excBestArm)
+		if bestArm <= arm:
+			arm += 1
 	return arm
 
-def testpolicy(numSim):
+def testpolicy(numSim):			#choose the arm with max alpha as target arm then keep choosing the max mu arm in its row.
 	global alpha,total
 	global alpha_init,userType
-	global N_arms,N_time,rewardInfluence,arms
+	global N_arms,N_time,rewardInfluence,arms  
 	alp = np.zeros((N_arms,N_time+1))
 	mu_est = np.zeros(N_arms)
 	for i in range(N_arms):
@@ -205,7 +218,7 @@ def testpolicy(numSim):
 		reset()
 		mu = np.zeros(N_arms)
 		amu = np.zeros((N_arms,N_arms))
-		numPulled = np.zeros((N_arms,N_arms))
+		numPulled = np.zeros((N_arms,N_arms)) 
 		numMatched = np.zeros(N_arms)
 		#pij = np.zeros(N_arms,N_arms)
 		for i in range(N_arms):
@@ -214,10 +227,11 @@ def testpolicy(numSim):
 			bestArm = np.argmax(mu)
 			#print(100*i/N_time)
 			#print(int(bestArm))
-			if i <= 600:
+			if i <= 550:
 				armChosen = int(armToPull1())
 			else:
 				armChosen = int(armToPull2(amu,bestArm))
+							 				   #exploitation even when there is a lower bound above which exploitation is occuring
 			reward = slot(armChosen)
 			if reward==0 or reward == 2:
 				mu[armChosen] = (mu[armChosen]*numMatched[armChosen] + reward)/(numMatched[armChosen] + 1)
@@ -225,28 +239,20 @@ def testpolicy(numSim):
 			else:
 				amu[userType][armChosen] = (amu[userType][armChosen]*numPulled[userType][armChosen] + reward)/(numPulled[userType][armChosen] + 1)
 				numPulled[userType][armChosen] += 1
-				
-			
 
 			for j in range(N_arms):
-
 				alp[j][i+1] += (alpha[j]/total)
-
-
-		#for j in range(N_arms):
-		#	mu_est[j] += mu[j]
+				#alp[j][i+2] += (alpha[j+1]/total)
 
 	#mu_est = 0.5*mu_est/numSim
 	alp = alp/numSim
 	#print(mu_est)
-	pl.plot(alp[0],'r')
+	pl.plot(alp[0],'r') #note:colour by row
 	pl.plot(alp[1],'g')
 	pl.plot(alp[2],'b')
 	pl.plot(alp[3],'c')
 	pl.plot(alp[4],'m')
 	pl.show()
-			
-
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
