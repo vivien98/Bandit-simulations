@@ -259,4 +259,4 @@ def testpolicy(numSim):			#choose the arm with max alpha as target arm then keep
 print(actualMeans)
 #sillyPolicy(100)
 #policy0(100)
-testpolicy(10)
+testpolicy(1)
