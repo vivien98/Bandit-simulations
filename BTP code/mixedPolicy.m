@@ -1,0 +1,13 @@
+function [reward,prop] = mixedPolicy(b00,b01,b10,b11,z0,T,Ts,A)
+p = 0;
+q = 0;
+[r,pr] = rewardAndProp(b00,b01,b10,b11,p,q,z0,Ts,A);
+rOld = r;
+z0 = pr;
+A = A + Ts;
+p = 1;
+q = 1;
+[r,pr] = rewardAndProp(b00,b01,b10,b11,p,q,z0,T-Ts,A);
+r = r + rOld;
+reward = r;
+prop = pr;

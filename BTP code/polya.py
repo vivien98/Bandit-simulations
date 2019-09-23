@@ -6,7 +6,7 @@ import matplotlib as mpl
 import pickle
 
 nArms = 2
-nTime = 10000
+nTime = 2000
 nSim = 10
 
 ipolicy = np.zeros((nArms,nArms))
@@ -106,7 +106,7 @@ def greedyPolicy(armPref):
 def optimalPolicy(armPref):
 	global urn,policy,mu,nArms,nTime,initTotalUrn,arms,ipolicy,iurn
 	p = int(mu[0,0] > 1 - mu[0,1])
-	q = int(mu[1,1] > 1 - mu[1,0])
+	q = int(mu[1,1] < 1 - mu[1,0])
 	ipolicy[0,0] = p
 	ipolicy[1,1] = q
 	ipolicy[1,0] = 1-q
@@ -120,6 +120,7 @@ def optimalPolicy(armPref):
 def policy1(armPref,probBall):
 	global urn,policy,mu,nArms,nTime,initTotalUrn,arms,ipolicy,iurn,state
 	limit = (ipolicy[1,0]*mu[1,0] + ipolicy[1,1]*(1-mu[1,1]))/(1 + ipolicy[1,0]*mu[1,0] + ipolicy[1,1]*(1-mu[1,1]) -(ipolicy[0,0]*mu[0,0] + ipolicy[0,1]*(1-mu[0,1]))) - 0.04
+	print(str(limit))
 	# if probBall[0] > limit :
 	# 	state += 1
 	# 	if state > 250:
@@ -152,24 +153,24 @@ greedyPolicy(0)
 
 
 
-# optimalPolicy()
-# [optProp,optRew,optCumRew] = simulate(nTime,nSim,0)
-
 optimalPolicy(0)
+[optProp,optRew,optCumRew] = simulate(nTime,nSim,0)
 
-[longProp,longRew,longCumRew] = simulate(nTime,nSim,1)
+# optimalPolicy(0)
+
+# [longProp,longRew,longCumRew] = simulate(nTime,nSim,1)
 
 pl.plot(greedyProp[:,0],'r') 
-#pl.plot(optProp[:,0],'b') 
-pl.plot(longProp[:,0],'g')
+pl.plot(optProp[:,0],'b') 
+# pl.plot(longProp[:,0],'g')
 pl.show()
 pl.plot(greedyRew,'r')
-#pl.plot(optRew,'b') 
-pl.plot(longRew,'g')
+pl.plot(optRew,'b') 
+# pl.plot(longRew,'g')
 pl.show()
 pl.plot(greedyCumRew,'r') 
-#pl.plot(optCumRew,'b') 
-pl.plot(longCumRew,'g')
+pl.plot(optCumRew,'b') 
+# pl.plot(longCumRew,'g')
 pl.show()
 
 
