@@ -1,11 +1,15 @@
-b00 = 0.8;
-b01 = 0.1;
-b10 = 0.5;
+% Plot the cumulative reward and proportion of users as 3D function of
+% policy (p,q) . P1P2optimize.m is the file which optimizes one of the
+% plots subject to some constraint on the other.
+
+b00 = 0.9;
+b01 = 0.3;
+b10 = 0.7;
 b11 = 0.7;
 z0 = 0.5;
-aTotal = 20;
-T = 2000000;
+aTotal = 50;
+T = 200000;
 [X,Y] = meshgrid(0:0.1:1);
-[Z1,Z2] = arrayfun(@(x,y) rewardAndProp(b00,b01,b10,b11,x,y,z0,T,aTotal),X,Y);
-figure(1),surf(X,Y,Z1)
-figure(2),surf(X,Y,Z2)
+[Z1,Z2] = arrayfun(@(x,y) rewardAndPropVoter(b00,b01,b10,b11,x,y,z0,T,aTotal),X,Y);
+figure(3),surf(X,Y,Z1)
+figure(4),surf(X,Y,Z2)
