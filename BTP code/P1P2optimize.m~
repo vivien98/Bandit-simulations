@@ -2,11 +2,11 @@
 % This code finds the optimal value of (p,q) policy s.t reward at a deadline is maximized 
 % subject to the constraint that the proportion of users of preference 0 is greater than 
 % a certain threshold zThresh. 
-% Plots the obtained optimal policy vs values of zThresh
+% Plots the obtained optimal policy vs values of zThresh.
 
-b00 = 0.8;
-b01 = 0.1;
-b10 = 0.5;
+b00 = 0.9;
+b01 = 0.2;
+b10 = 0.6;
 b11 = 0.7;
 z0 = 0.5;
 zThresh = 0.6:0.01:0.85;
@@ -39,5 +39,4 @@ policyArr2 = [policyArr2,sol.pol(2)];
 end
 figure(1)
 plot(zThresh,policyArr1,zThresh,policyArr2)
-figure(2)
-plot(policyArr1,policyArr2)
+
