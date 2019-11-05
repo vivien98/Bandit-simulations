@@ -24,8 +24,8 @@ initTotalUrn = 20
 
 mu[0,0] = 0.8 # initialise bernoulli reward matrix
 mu[0,1] = 0.1
-mu[1,0] = 0.4
-mu[1,1] = 0.7
+mu[1,0] = 0.1
+mu[1,1] = 0.8
 
 state = 0
 
