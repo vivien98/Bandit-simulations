@@ -296,26 +296,54 @@ def simulateTHO(nSim,nTime,B,initUrn,initProp):
 
 #___________________________________________________________MAIN___________________________________________________________#
 
-b00 = 0.9 # initialise bernoulli reward matrix
-b01 = 0.4
-b10 = 0.2
-b11 = 0.6
+b00 = 0.9 # initialise bernoulli reward matrix # 
+b01 = 0.7
+b10 = 0.7
+b11 = 0.9
 B = np.matrix([[b00,b01],[b10,b11]])
 
-nSim = 100
+nSim = 1000
 nTime = 1000
 initUrn = 20
 initProp = 0.5
-tThresh = 50
+tThresh = 150
 
 out1 = simulateOPT(nSim,nTime,B,initUrn,initProp)
 out2,reg2 = simulateETC(nSim,nTime,B,initUrn,initProp,tThresh)
 out3,reg3 = simulateTHO(nSim,nTime,B,initUrn,initProp)
 
-pl.plot(out1 , 'r')
-pl.plot(out2 ,'b')
-pl.plot(out3 ,'g')
-pl.show()	
-pl.plot(reg2 ,'b')
-pl.plot(reg3 ,'g')
-pl.show()	
+
+pl.subplot(1,2,1)
+pl.plot(out1 , 'r-',label='Optimal policy',linewidth = 2.5)				# POPULATION PROPORTION PLOTTING # NORMAl
+pl.plot(out2 ,'b--',label='ETC policy',linewidth = 2.5)
+pl.plot(out3 ,'g-.',label='TS policy',linewidth = 2.5)
+pl.legend(loc='lower right',frameon=True,prop={"size":20})
+pl.xlabel('Time',fontsize=20)
+pl.ylabel('Proportion of Type 1 users',fontsize=20)
+pl.tick_params(labelsize=20);
+pl.subplot(1,2,2)
+pl.plot(reg2 ,'b-',label='Regret for ETC policy',linewidth = 2.5)			# REGRET PLOTTING
+pl.plot(reg3 ,'g--',label='Regret for TS policy',linewidth = 2.5)
+pl.legend(loc='lower right',frameon=True,prop={"size":20})
+pl.xlabel('Time',fontsize=20)
+pl.ylabel('Cumulative Regret',fontsize=20)
+pl.tick_params(labelsize=20);
+pl.show()
+
+pl.subplot(1,2,1)
+pl.plot(out1 , 'r-',label='Optimal policy',linewidth = 2.5)				# POPULATION PROPORTION PLOTTING #LOG
+pl.plot(out2 ,'b--',label='ETC policy',linewidth = 2.5)
+pl.plot(out3 ,'g-.',label='TS policy',linewidth = 2.5)
+pl.legend(loc='lower right',frameon=True,prop={"size":20})
+pl.xlabel('Time',fontsize=20)
+pl.ylabel('Proportion of Type 1 users',fontsize=20)
+pl.tick_params(labelsize=20);
+pl.subplot(1,2,2)
+pl.plot(reg2 ,'b-',label='Regret for ETC policy',linewidth = 2.5)			# REGRET PLOTTING LOG
+pl.plot(reg3 ,'g--',label='Regret for TS policy',linewidth = 2.5)
+pl.legend(loc='upper left',frameon=True,prop={"size":20})
+pl.xscale("log")
+pl.xlabel('Time',fontsize=20)
+pl.ylabel('Cumulative Regret',fontsize=20)
+pl.tick_params(labelsize=20);
+pl.show()
