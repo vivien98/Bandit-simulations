@@ -305,9 +305,9 @@ def simulateTHO(nSim,nTime,B,initUrn,initProp):
 
 #___________________________________________________________MAIN___________________________________________________________#
 
-b00 = 0.7 # initialise bernoulli reward matrix # 
-b01 = 0.1
-b10 = 0.6
+b00 = 0.6 # initialise bernoulli reward matrix # 7568
+b01 = 0.2
+b10 = 0.2
 b11 = 0.6
 B = np.matrix([[b00,b01],[b10,b11]])
 
@@ -324,14 +324,14 @@ out2,pop00,pop11 = simulateOPT2(nSim,nTime,B,initUrn,initProp)
 pl.subplot(1,2,1)
 pl.plot(out1 , 'r-',label='Optimal policy with 1 RS',linewidth = 2.5)				# POPULATION PROPORTION PLOTTING # NORMAl
 pl.plot(out2 ,'b--',label='Optimal policy with 2 RS',linewidth = 2.5)
-pl.legend(loc='lower right',frameon=True,prop={"size":20})
+pl.legend(loc='upper right',frameon=True,prop={"size":20})
 pl.xlabel('Time',fontsize=20)
 pl.ylabel('Proportion of Type 1 users',fontsize=20)
 pl.tick_params(labelsize=20);
 pl.subplot(1,2,2)
 pl.plot(pop00 ,'b-',label='Popularity of S1 with type 1',linewidth = 2.5)			# REGRET PLOTTING
 pl.plot(pop11 ,'g--',label='Popularity of S2 with type 2',linewidth = 2.5)
-pl.legend(loc='lower right',frameon=True,prop={"size":20})
+pl.legend(loc='upper right',frameon=True,prop={"size":20})
 pl.xlabel('Time',fontsize=20)
 pl.ylabel('Popularity',fontsize=20)
 pl.tick_params(labelsize=20);
