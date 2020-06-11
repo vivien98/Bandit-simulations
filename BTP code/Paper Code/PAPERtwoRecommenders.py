@@ -305,10 +305,10 @@ def simulateTHO(nSim,nTime,B,initUrn,initProp):
 
 #___________________________________________________________MAIN___________________________________________________________#
 
-b00 = 0.6 # initialise bernoulli reward matrix # 7568
-b01 = 0.2
-b10 = 0.2
-b11 = 0.6
+b00 = 0.7 # initialise bernoulli reward matrix # 7568
+b01 = 0.1
+b10 = 0.3
+b11 = 0.9
 B = np.matrix([[b00,b01],[b10,b11]])
 
 nSim = 100
