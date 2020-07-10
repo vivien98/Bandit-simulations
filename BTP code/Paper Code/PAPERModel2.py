@@ -106,9 +106,9 @@ def simulateOPT(nSim,nTime,B,initUrn,initProp):
 
 
 b00 = 0.9 # initialise bernoulli reward matrix # 
-b01 = 0.7
-b10 = 0.7
-b11 = 0.9
+b01 = 0.3
+b10 = 0.1
+b11 = 0.7
 B = np.matrix([[b00,b01],[b10,b11]])
 
 nSim = 1000
